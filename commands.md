@@ -170,3 +170,6 @@ kubectl get namespaces
 git add README.md
 git commit -m "Added CKA essential commands"
 git push origin main  # or your current branch name
+
+
+kubectl run --restart=Never --image=busybox static-busybox --dry-run=client -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/static-busybox.yaml
