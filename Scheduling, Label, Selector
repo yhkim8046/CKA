@@ -1,0 +1,70 @@
+# Label, Selector, Node Affinity, Taints, Tolerations
+---
+# Label (라벨) 
+- 쿠버네티스 오브젝트에 붙이는 키-값 쌍 메타 데이터
+
+용도: 
+- 특정 리소스를 그룹화하거나 구분할 때 사용
+- Node Affinity, Service Selector, HPA 등 여러 기능에서 활용
+
+$ kubectl label nodes node1 disktype=ssd
+
+---
+
+# Selector
+- 라벨을 기반으로 원하는 오브젝트를 선택하는 조건
+
+종류: 
+- Equality-based: key=value, key!=value
+- Set-based: In, NotIn, Exists, DoesNotExist
+
+예시) 
+selector:
+  matchLabels:
+    app: myapp
+
+---
+# Node Affinity
+- 파드가 특정 레이블을 가진 노드에만 스케줄링되도록 제약을 거는 규칙. 
+- requiredDuringSchedulingIgnoredDuringExecution: 필수 조건. 만족하지 않으면 파드 스케줄링 불가.
+- preferredDuringSchedulingIgnoredDuringExecution: 선호 조건. 만족하면 좋지만, 못 맞추면 다른 노드에도 배치 가능.
+
+예시): 
+ 
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: disktype
+          operator: In
+          values:
+          - ssd
+
+---
+
+# Taints
+
+- 특정 노드에 "여기에는 아무 파드나 오지 마라"는 제약 조건을 걸어두는 것
+
+구조: key=value:effect
+- No Schedule -> 이 테인트를 가진 노드에는 파드가 배치되지 않음 - Toleration이 있으면 배치 가능
+- PreferNoSchedule -> 되도록이면 배치하지 말라는 권장 조건
+- NoExecute -> 기존 파드도 쫓아내버림(Eviction) 가능
+
+$ kubectl taint node nodes1 key1=value1:NoSchedule
+
+---
+
+# Tolerations
+
+- 파드 쪽에서 "나는 저 테인트를 무시할 수 있다" 라고 허용하는 설정 -> Taints + Toleration이 쌍으로 동작
+
+예시):
+
+tolerations:
+- key: "key1"
+  operator: "Equal"
+  value: "value1"
+  effect: "NoSchedule"
+
