@@ -1,0 +1,68 @@
+# Autoscaling 
+---
+
+# HPA
+
+- 파드 개수를 자동으로 늘리거나 줄이는 기능
+- 기준: CPU 사용량, 메모리 사용량, 커스텀 메트릭
+- 동작 방식: 
+  - Metrics Server가 파드 리소스 사용량을 수집
+  - HPA가 설정된 target 값과 비교
+  - 필요시 Replica 개수를 증가/감소
+
+예시): 
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myapp-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: myapp
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50   # CPU 평균 사용률 50% 유지 목표
+
+
+---
+
+# VPA 
+
+- 정의: 파드 자체의 리소스 요청/제한(CPU, Memory)을 자동으로 조정
+- 상황: 파드 개수는 충분하지만, 각 파드 리소스 크기가 부족/과도할 때 사용
+- 모드:
+ - Off: 추천만 하고 실제 변경 안 함
+ - Auto: 파드를 재시작하면서 리소스 크기를 자동 조정
+ - Initial: 최초 생성 시에만 리소스 값 추천
+
+예시):  
+
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: myapp-vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: myapp
+  updatePolicy:
+    updateMode: "Auto"   # 자동으로 리소스 조정
+
+---
+# HPA vs VPA 차이
+
+| 구분 | HPA                | VPA                     |
+| -- | ------------------ | ----------------------- |
+| 방향 | 수평 확장 (파드 개수)      | 수직 확장 (파드 리소스 크기)       |
+| 장점 | 트래픽 폭증 시 유연하게 확장   | 안정적인 워크로드에 최적 리소스 제공    |
+| 단점 | 노드 리소스 한계에 걸릴 수 있음 | 파드 재시작 필요 (일시적 다운타임 발생) |
+| 활용 | 웹 서비스(트래픽 가변적)     | 배치 잡, 머신러닝 모델 학습 등      |
+
