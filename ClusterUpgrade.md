@@ -25,7 +25,9 @@ kubeadm upgrade apply v1.33.0
 4. kubelet 업그레이드
 
 ```
-apt-get install kubelet=1.33.0-1.1
+sudo apt-mark unhold kubelet kubectl && \
+sudo apt-get update && sudo apt-get install -y kubelet='1.33.0-1.1' kubectl='1.33.0-1.1' && \
+sudo apt-mark hold kubelet kubectl
 ```
 
 5. 서비스 재시작
