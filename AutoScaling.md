@@ -10,7 +10,7 @@
   - HPA가 설정된 target 값과 비교
   - 필요시 Replica 개수를 증가/감소
 
-예시): 
+``` 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -29,8 +29,7 @@ spec:
       target:
         type: Utilization
         averageUtilization: 50   # CPU 평균 사용률 50% 유지 목표
-
-
+```
 ---
 
 # VPA 

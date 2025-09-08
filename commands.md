@@ -1,7 +1,5 @@
 ### **📌 CKA Exam Essential `kubectl` Commands (README.md)**
 
-# 🚀 CKA Exam Essential `kubectl` Commands
-
 ## 📌 Key Points for CKA Exam
 - **Speed is crucial!** Use `kubectl` to generate YAML files and modify them instead of writing from scratch.
 - **Troubleshooting is a must!** Be able to check pod status, logs, and debug common issues.
@@ -106,70 +104,5 @@ kubectl exec -it <pod-name> -- /bin/sh
 kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 
----
-
-## **5️⃣ etcd Backup & Restore (Important for Exam!)**
-### ✅ **Backup etcd Data**
-```bash
-ETCDCTL_API=3 etcdctl snapshot save /tmp/backup.db \
-  --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-  --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
-```
-
-### ✅ **Restore etcd from Backup**
-```bash
-ETCDCTL_API=3 etcdctl snapshot restore /tmp/backup.db --data-dir /var/lib/etcd-backup
-```
-
----
-
-## **6️⃣ RBAC (Role-Based Access Control)**
-### ✅ **Check User Permissions**
-```bash
-kubectl auth can-i create pod --as=user1
-kubectl auth can-i list pods --as=user1
-```
-
-### ✅ **Create a Role & RoleBinding**
-```bash
-kubectl create role pod-reader --verb=get,list --resource=pods --namespace=default
-kubectl create rolebinding pod-reader-binding --role=pod-reader --user=user1 --namespace=default
-```
-
----
-
-## **7️⃣ Namespace Management**
-### ✅ **Create a Namespace**
-```bash
-kubectl create namespace my-namespace
-```
-
-### ✅ **List All Namespaces**
-```bash
-kubectl get namespaces
-```
-
----
-
-## **🚀 Final Tips for CKA Success**
-✅ **Use `kubectl run` for quick pod creation**  
-✅ **Use `kubectl create --dry-run=client -o yaml` to generate YAML quickly**  
-✅ **Troubleshoot issues using `kubectl describe`, `kubectl logs`, and `kubectl get events`**  
-✅ **Understand how to back up and restore `etcd`**  
-✅ **Practice `RBAC`, `Service`, and `Networking` concepts**  
-
----
-
-### **🚀 How to Upload This to GitHub**
-1. **Save this file as `README.md`**
-2. Open a terminal and navigate to your GitHub repo folder.
-3. Run the following commands:
-```bash
-git add README.md
-git commit -m "Added CKA essential commands"
-git push origin main  # or your current branch name
 
 
-kubectl run --restart=Never --image=busybox static-busybox --dry-run=client -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/static-busybox.yaml
